@@ -1,0 +1,70 @@
+
+	NAME
+		ld - Bruce Evans linker
+
+	SYNOPSIS
+
+		ld [-03Mimsz[-]] [-T textaddr] [-L libpath] [-l library]
+			[-o outfile] objectfiles...
+
+	DESCRIPTION
+
+		The following command-line arguments may be used:
+
+		-0      16-bit code as for a 8086
+
+		-3      32-bit code as for a 80386 or better
+
+		-i	seperate Instruction and Data (I&D) space
+
+		-L libpath
+			set the path for finding library files.
+
+		-llibname
+			specify the name of a library file.  The exact
+			rules for expanding libname to the full filename
+			of the library depend on settings used at the
+			time that the ld program was built.  However
+			the commonest treatment is that a prefix of 'lib'
+			and a suffix of '.a' are added.  If this is the
+			convention used then -ltest would mean use a
+			library with the name libtest.a.
+
+			The position of any -l parameters with respect to
+			object files is significant in that both object
+			files and libraries are processed in the order
+			in which they occur in the command-line.  Also
+			multiple occurrences of the -l parameter can be
+			used as required.
+
+		-M	print a list of the symbols linked
+
+		-m	print a list of the modules linked
+
+		-o outfile
+			The name give to the output file.  If this parameter
+			is ommitted then an implementation defined default
+			will be used instead.  By convention this default
+			name is typically a.out
+		
+		-r	Relocatable output (BSD only)
+
+		-s	strip symbols
+
+		-T	set text address.
+
+		-z	unmapped zero page
+
+
+	NOTES
+
+		1.The description given here is by brief examination of
+		the source, and has not been produced by Bruce Evans
+		himself as the author of this program.  The descriptions
+		given are therefore likely to either be incomplete or,
+		even worse, contain errors.
+
+		2.Not all of the options listed are always available.  It
+		depends on what decisions were made at the time that the
+		assembler was built.
+

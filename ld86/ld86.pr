@@ -1,0 +1,43 @@
+#system epoc img
+#set epocinit=iplib8
+-- #set epocinit=iclib
+#model small jpi
+#pragma optimize(speed=>off)
+#pragma option(lang_ext=>on)
+
+#pragma warn(wclt=>on)
+#pragma warn(wfnd=>on)
+#pragma warn(wpnd=>on)
+#pragma warn(wnre=>on)
+#pragma warn(wnrv=>on)
+#pragma warn(wpnu=>on)
+
+#pragma define(NDEBUG=>1)
+#pragma define(__STDC__=>1)
+#pragma define(EPOC=>1)
+#pragma define(EPOC_TARGET=>1)
+#pragma define(JPIC=>1)
+
+#pragma debug(vid=>full)
+
+-- #if (%main.rsg #older %main.rss) #then
+--   #run "rcomp %main" no_window no_abort
+-- #endif
+
+-- #if %main.rzc #older %main.rsg #then
+--   #run "rch %main" no_window no_abort
+-- #endif
+
+#compile dumps
+#compile io
+#compile ld
+#compile readobj
+#compile table
+#compile typeconv
+#compile writebin
+#compile epoc
+
+#pragma link(cpoclib.lib)
+-- #pragma link(clib.lib)
+
+#link %main
