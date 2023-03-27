@@ -1,0 +1,624 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<TITLE>C68 LD Linker v2.0</TITLE>
+</HEAD>
+
+<BODY LINK="#0000ff" VLINK="#800080">
+
+<H3 ALIGN="CENTER">C68 COMPILATION SYSTEM</H3>
+<H1 ALIGN="CENTER">C68 Linker</H1>
+
+<A NAME="NAME"></A>
+<H3>NAME </H3>
+<DIR>
+  ld - Link files to produce program files or RLL libraries.
+</DIR>
+
+<A NAME="SYNOPSIS"></A>
+<H3>SYNOPSIS </H3>
+<DIR>
+  ld [<VAR>options</VAR>] [<VAR>cfile_o</VAR>] <VAR>[-llibrary</VAR>]
+</DIR>
+
+<A NAME="DESCRIPTION"></A>
+<H3>DESCRIPTION </H3>
+<DIR>
+The <CODE>LD</CODE> linker is used to produce binary code that is ready to run.
+This code can be any of:
+<UL>
+  <LI>An <CODE>EXEC</CODE>able program that can be run directly.</LI>
+  <LI>A RLL (Runtime Link Library) for use with the RLL system.</LI>
+  <LI>Pure binary code that is loaded via <CODE>RESPR</CODE> commands.</LI>
+</UL>
+<P>
+After the files comprising a C program have been compiled into
+object (SROFF) files they must be linked, together with selected
+library routines, to produce an executable program.
+This is done by the program <CODE>LD</CODE>, which replaces the
+program <CODE>LINK</CODE> that is the traditional linker commonly
+used on the QL.</P>
+<P>
+<CODE>LD</CODE> is much more UNIX like in use than <CODE>LINK</CODE>.
+This is makes it more consistent with the rest of the C68 system
+which has its origins on UNIX based system.
+In addition, the <CODE>LD</CODE> linker is far more efficient than
+the original <CODE>LINK</CODE> program in that it runs about 3 times
+faster, and also the resulting program is smaller.
+It is also possible to run <CODE>LD</CODE> in a compatibility mode
+where it can produce output in the same format as the original
+<CODE>LINK</CODE> program.</P>
+<P>
+The different linkers have used different standards for the way
+that they store relocation information in the output file.
+To allow maximum flexibility, the <CODE>LD</CODE> version 2.xx series
+has the ability to produce output that uses a variety of different
+formats:
+<UL>
+  <LI><CODE>LD</CODE> version 2.xx format that was introduced to
+      support the RLL system. This format (which is the default)
+      allows more information to be stored in the target file than
+      earlier formats catered for. </LI>
+  <LI><CODE>>LD</CODE> version 1.xx. This is the format that was
+      used by all versions of the c68 system prior to release 4.30.</LI>
+  <LI>GST <CODE>LINK</CODE> format. This is the format produced by
+      the traditional GST linker, and the more recent Quanta
+      <CODE>QLINK</CODE> variant. </LI>
+</UL>
+  If either of these last two formats is required, then the appropriate
+  command line option must be used.
+</DIR>
+
+<A NAME="OPTIONS"></A>
+<H3>OPTIONS </H3>
+<DIR>
+  The following command line options are available for use with the
+  <CODE>LD</CODE> linker.
+
+<TABLE CELLPADDING=7 WIDTH="90%">
+<TR VALIGN="TOP" ALIGN="LEFT">
+ <TH WIDTH="25%"><FONT SIZE="+1">Options</FONT></TD>
+ <TH WIDTH="70%"><FONT SIZE="+1">Description</FONT></TD>
+</TR>
+<TR VALIGN="TOP">
+ <TD><CODE><A NAME="Format_option"></A>-f</CODE><VAR>n</VAR></TD>
+ <TD>The output format required.
+     The values available for <EM>n</EM> are:
+  <TABLE>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER" WIDTH="15%">0</TD>
+    <TD>GST <CODE>LINK</CODE> or Quanta <CODE>QLINK</CODE> format</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER">1</TD>
+    <TD><CODE>LD</CODE> version 1.xx format</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER">2</TD>
+    <TD><CODE>LD</CODE> version 2.xx format</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD COLSPAN=2>You can also add any combination of the following 
+    values although many of them will not make sense unless using 
+    LD v2.xx format.  For a more detailed discussion of the implications
+    of these settings, see the section concerning the start of the
+   <A HREF="#START_OF_UDATA_AREA">UDATA</A> area later in this document.</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD WIDTH="15%" ALIGN="CENTER">4</TD>
+    <TD>Set the UDATA area to NOT reuse the relocation area.
+        If you are using GST format, then you would normally
+        use this option as well.</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER">8</TD>
+    <TD>Set the UDATA area to NOT reuse the BSS XREF area.
+        This only makes sense if you are either using RLL libraries,
+        or alternatively have used the option
+        <A HREF="#z_symbols_option">(-z xref</A>) to include
+        external references</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER">16</TD>
+    <TD>Set the UDATA area to NOT reuse the BSS RLIB area.
+       This only makes sense if you are linking with RLL libraries</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER">32</TD>
+    <TD>Set the UDATA area to NOT re-use the BSS XDEF area.
+        This is the normal default for a RLL, 
+        but not for other target types.</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER">64</TD>
+    <TD>Set the UDATA area to reuse the BSS XDEF area.
+        This is the normal default for everything except a RLL</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER">128</TD>
+    <TD>Set the UDATA area to reuse the BSS Header area.
+        Normally if any the BSS XDEF area is
+        present then this would not be re-used</TD>
+  </TR>
+  </TABLE>
+<TR VALIGN="TOP">
+  <TD>&nbsp;</TD>
+  <TD>Default: <CODE>-f2</CODE><P></TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="LibPath_option"></A>-L</CODE><VAR>library path</VAR></TD>
+<TD>This option allows the order of searching of library files
+    to be changed. The order of searching for libraries is:
+    <OL>
+      <LI>Any library directories specified using the <CODE>-L</CODE> option.
+          If multiple <CODE>-L</CODE> options are specified, then these are
+          searched in the order they are specified on the command line. </LI>
+      <LI>The <CODE>LIB</CODE> sub-directory of the current program
+          (<CODE>PROG_USE</CODE>) setting. For example, if the default
+          program directory is <CODE>flp1_</CODE> then libraries
+           would be expected to be found in <CODE>flp1_lib_.</CODE></LI>
+      <LI>The current data (<CODE>DATA_USE</CODE>) directory.</LI>
+    </OL>
+    If a specified library cannot be found in any of these locations,
+    then an error message will be output.<P></TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="LibName_option"></A>-l</CODE><VAR>libname</VAR></TD>
+<TD>Search a statically linked library looking for any modules in
+    the library that will satisfy any of the currently outstanding
+    external references. If any such modules are found then add them
+    to the output file. </P>
+    <P>
+    Library names are normally specified on the command line after all
+    the object files. This is, however, not mandatory. The libraries and
+    object files are processed in the order specified on the command line.
+    Note that only a single pass of a library is done so that
+    including a library too early in the command line may cause routines
+    to not be included that you might want.</P>
+    <P>
+    By convention library names are given in a specially compact format.
+    The names for libraries are made up by adding a prefix of
+    <CODE>lib</CODE> and an extension of <CODE>_a</CODE> to the name
+    specified on the command line. For example the main C library is
+    called <CODE>libc_a</CODE> and the maths library is called
+    <CODE>libm_a</CODE>.</P>
+    <P>
+    Thus to link with the math library, you would use <CODE>-lm</CODE>,
+    to link with the standard C library <CODE>-lc</CODE>.
+    A full library pathname is never given in this parameter,
+    but you can specify a search path (using the 
+    <A HREF="#LibPath_option">-L</A> option).
+    So, if you wanted to link with a private library called
+    <CODE>libmine_a</CODE>, which was in a directory
+    <CODE>flp1_mylib_</CODE> then the two options you would need on
+    your command line are :
+    <DIR>
+      <CODE>-Lflp1_mylib_ &lt;object files .... &gt; -lmine</CODE>
+    </DIR>
+    It is not actually necessary to specify the default C library
+    (by using <CODE>-lc</CODE>) as if there are any outstanding
+    references when all the libraries you have explicitly mentioned
+    have been processed the <CODE>libc_a</CODE> library is
+    automatically searched as the last library (although you do no
+    damage if you specify it explicitly). The <CODE.libc_a</CODE>
+    library includes most of the routines described in the C library
+    description, along with many other run time routines that need
+    to be included.</TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="Listing_option"></A>-m</CODE><VAR>listing_options</VAR></TD>
+<TD>This causes a listing file to be produced for the program.
+    The name of the file produced is always
+    <VAR>output_file_name</VAR><CODE>_map</CODE> so if no output
+    name has been specified then the map file will be called
+    <CODE>a_out_map</CODE>. If the output file had been specified
+    using <CODE>-otest</CODE> then the listing file would be called
+    <CODE>test_map.</CODE> </P>
+    <P>
+    The amount of detail included in the map file will depend on the
+    options supplied.  There must be at least one option, but you can
+    specify more than one by simply concatenating them together
+    (e.g. <CODE>-mls</CODE>). The options available are:
+   <TABLE>
+   <TR VALIGN="TOP">
+     <TD WIDTH="15%" ALIGN="CENTER"><CODE>a</CODE></TD>
+     <TD>A symbol listing will be produced in address order</TD>
+   </TR>
+   <TR VALIGN="TOP">
+     <TD ALIGN="CENTER"<CODE>l</CODE></TD>
+     <TD>A library listing will be produced.
+         This will indicate each library that is searched and
+         where it is located. If the <B>m</B> option is also used,
+         then the library detail lines will be inserted at the
+         appropriate points in the module listing</TD>
+   </TR>
+   <TR VALIGN="TOP">
+     <TD ALIGN="CENTER"><CODE>m</CODE></TD>
+     <TD>A module listing will be produced showing the details of
+         each module that is included in the link. This will be
+         in the order in which the modules are included. </TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER"><CODE>s</CODE></TD>
+    <TD>A symbol listing will be produced giving symbols in
+        alphabetical order, and showing for each symbol where
+        it is defined</TD>
+  </TR>
+  <TR VALIGN="TOP">
+    <TD ALIGN="CENTER"><CODE>x</CODE></TD>
+    <TD>A cross-reference listing will be produced showing for
+        each symbol where it has been called from.
+        This option will also imply the <B>l </B>option as that
+        information is also listed for each symbol. </P>
+        <P>
+        Note, however, this will miss any cases where the reference
+        to a symbol is in the same module that it is defined in as
+        this is handled purely at the assembler stage. </TD>
+  </TR>
+  </TABLE>
+  <P>
+  There is also a listing summary produced that shows the link statistics.
+  This is inserted after the library/module listings and before the more
+  detailed symbol listings. </P>
+  <P>
+  Note that if the <CODE>-v</CODE> option is used and there is no
+  listing file being produced, then this summary information is
+  written instead to the console. </P>
+  <P>
+  Default:<P></TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="Output_option"></A>-o</CODE><VAR>outputfile</VAR></TD>
+<TD>This allows the name of the output file to be specified.
+    For example using a <CODE>-otest</CODE> would cause a program
+    called <CODE>test </CODE>to be produced</P>
+    <P>
+    Default: <CODE>-oa_out</CODE><P></TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="RLL_Name_option">
+    </A>-R</CODE><VAR>name</VAR>[<CODE>/</CODE><VAR>version</VAR>]</TD>
+<TD>This indicates that LD is to build a RLL rather than a normal program.
+    The <CODE>name</CODE> part of the parameter is the name that will be
+    given to the RLL thing. This has a maximum length of 16 characters
+    - and more than this will be ignored. </P>
+    <P>
+    The (optional) version part is the version number
+    (which is of the form <B>m.nn</B> where <B>m</B> is the major version
+    number and <B>nn</B> is the minor version number. In practise     <CODE>LD</CODE> will do no validation on this version number
+    beyond checking its length to be 4 characters and will simply
+    copy the value supplied into the RLL header. If the version
+    number information is not supplied, then a value of "1.00"
+    will be used. </P>
+    <P>
+    The use of this parameter will also modify the default behaviour of
+    <CODE>LD </CODE>as follows: </P>
+    <UL>
+    <LI>The default start-up module is changed to be <CODE>rll_o</CODE>
+        as this is the one normally needed when building a RLL.</LI>
+    <LI>The output program will have any required UDATA space included
+        in the file to simplify the loading process for the RLL Runtime
+        Link Manager (RLM).
+    </UL>
+    <P>
+</TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><P><A NAME="RLL_Library_option"></A>-r</CODE><VAR>libname</VAR></TD>
+<TD>Search a RLL library.
+    A RLL library is one that is dynamically linked to a program
+    at runtime. Although LD does not add it to the output file it
+    does search it to determine which external references would be
+    satisfied by including this library. The same locations will be
+    searched as are specified earlier for the <B>-l</B> option. </P>
+    <P>
+    The name of a RLL library is made in a similar way to that for
+    statically linked libraries except that the extension is
+    <CODE>_rll</CODE>. For example the maths library would be specified
+    by using <CODE>-rm</CODE> which would cause LD to look for a
+    RLL library called <CODE>libm_rll.</CODE> </P>
+    <P>
+    RLL libraries can also have what are called "RLL stub libraries".
+    These are small statically linked libraries that need to be linked
+    in to help interface to a RLL. These have the same name as the
+    associated RLL, but with an extension of <VAR>_rls</VAR>.
+    Therefore the stub version of the maths library specified using
+    <CODE>-lm</CODE> would be <CODE>libm_rls</CODE>. LD will look for
+    such a stub library any time a RLL is specified, and if there is
+    one it will statically link it in before the RLL library file.
+    However stub libraries are optional, and no error will be given
+    if no stub library is found. </P>
+    <P>
+    Note that if a RLL library is linked in, it is necessary for this
+    library to also be present at runtime for the program to run
+    successfully. For more information on the RLL system see the main
+    <A HREF="rll.htm">RLL documentation</A>.</P>
+    <P>
+    The other point to note is that no RLLs are linked in by default,
+    not even the <CODE>libc_rll</CODE> file. This is to ensure that
+    unless the user explicitly asks for RLLs to be used the default
+    action is to do static linking as in earlier releases of the
+    <CODE>LD</CODE> linker.  When the RLL system is well established
+    this behaviour may well be reversed to make RLL linking the default
+    for the standard C libraries.</TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="Startup_option"></A>-s</CODE><VAR>startup_file</VAR></TD>
+<TD>This option specifies a different start-up file from the standard one.
+    Using the special format of <CODE>-s-</CODE> means that no start-up
+    module is to be used. </P>
+    <P>
+   The start-up file is the code that does all the run time relocation
+   that allows C programs to run correctly where they have been loaded
+   under QDOS. Unless you have written your own start-up file that does
+   runtime relocation correctly it is probably best to leave this option
+   alone. </P>
+   <P>
+   If this parameter is omitted, then the start-up modules that are used
+   will be:
+   <TABLE WIDTH="90%">
+   <TR VALIGN="TOP">
+     <TD WIDTH="25%" ALIGN="CENTER"><CODE>crt_o</CODE></TD>
+     <TD> for standard programs</TD>
+   </TR>
+   <TR VALIGN="TOP">
+     <TD ALIGN="CENTER"><CODE>rll_o</CODE></TD>
+     <TD>for RLL libraries</TD>
+   </TR>
+   </TABLE>
+   <P>
+   The start-up file is searched for using the same paths as are used
+   when searching for libraries (as described under the
+   <A HREF="#LibName_option">-l</A> option). Examples on when
+    you might want to used different values are:
+   <TABLE WIDTH="90%">
+   <TR VALIGN="TOP">
+     <TD ALIGN="CENTER" WIDTH="25%"><CODE>-screspr_o</CODE></TD>
+     <TD>if you are using C to build code that is going to be
+         loaded as a resident extension rather than used as an
+         <CODE>EXEC</CODE>able program. For more details see the
+         <CODE>C68QDOS_doc</CODE> documentation file.
+   </TR>
+   <TR VALIGN="TOP">
+     <TD ALIGN="CENTER"><CODE>-s-</CODE></TD>
+     <TD>if you are going to use <CODE>LD</CODE> as a replacement
+         for the <CODE>LINK</CODE> linker and you are not writing
+         C68 compiled code. </TD>
+   </TR>
+   </TABLE>
+   <P>
+</TR>
+
+<TR VALIGN="TOP">
+  <TD><CODE>-U</CODE>
+  <TD>Treat all external references as upper case.
+      <P>
+      This version of LD treats external references as case significant
+      as this is the normal convention for C programs.  However 
+      LD v1.x and the LINK linkers treat all external references as
+      though they were upper case.  Use this option to force
+      compatibility with the way these earlier linkers handled the
+      case of external symbols.
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="Version_option"></A>-V</CODE></TD>
+<TD>Output a message giving information about the version of
+    <CODE>LD </CODE>being used. This message will be sent to the
+    listing file if one is to be produced, and otherwise to the
+    console.</TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="verbose_option"></A>-v</CODE></TD>
+<TD>This means run in verbose mode.
+    It also implies the <CODE>-V</CODE> parameter.
+    This will always cause the program version to be output and a
+    link summary to always be produced.
+    If no listing file is being output these will be sent to the
+    console, otherwise to the listing file.</TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE><A NAME="z_symbols_option"></A>-z</CODE> <VAR>option(s)</VAR></TD>
+<TD>Specify what should be included in the binary file that will be produced.
+    If you want to specify more than one of the available options,
+    then they should all be written using a plus ('+') symbol as the separator.</P>
+    <P>
+    The options available are:
+    <TABLE WIDTH="90%">
+    <TR VALIGN="TOP">
+    <TD ALIGN="CENTER" WIDTH="15%"><CODE>defs</CODE></TD>
+    <TD>Force a fatal error if undefined symbols remain at the end
+        of the link process. This is the default action.</TD>
+    </TR>
+    <TR VALIGN="TOP">
+    <TD ALIGN="CENTER"><CODE>nodefs</CODE></TD>
+    <TD>Allow undefined symbols.
+       This might be used if you are developing a program and you
+       know the symbols in question will not be used.
+       It can also be used when building a RLL to allow an undefined
+       RLL to be linked in dynamically at run-time. However as any
+       attempt by a program to actually use an undefined symbol is
+       likely to cause a system crash this option should be used with
+       extreme caution. </TD>
+    </TR>
+    <TR VALIGN="TOP">
+    <TD ALIGN="CENTER"><CODE>udata</CODE></TD>
+    <TD>Store any <A HREF="#START_OF_UDATA_AREA">UDATA</A> space as
+        part of the file data rather than simply storing the size required
+        as part of the information in the file header.</P>
+        <P>
+        This is the default if building a RLL</P>
+        <P>
+        You are recommended to use this parameter when building code that
+        is to be loaded via <CODE>RESPR</CODE> or <CODE>LRESPR</CODE>
+        instructions.</TD>
+    </TR>
+    <TR VALIGN="TOP">
+    <TD ALIGN="CENTER"><CDOE>xref</CODE></TD>
+    <TD>Include a list of any unsatisfied external references in the
+        program, and the details of the RLL that will satisify them.
+        This is very similar to the <CODE>-nodefs</CODE> option
+        mentioned above, except that this option expects you to have
+        used the <B>-r</B> option to specify the RLL that will be used
+        to satisfy the reference at runtime. </P>
+        <P>
+        This is automatically assumed when the <CODE>-r</CODE>
+        parameter is used to link in a RLL.</TD>
+   </TR>
+   <TR VALIGN="TOP">
+   <TD ALIGN="CENTER"><CODE>xdef</CODE></TD>
+   <TD>Include a list of externally visible definitions that are
+       contained in this program or RLL.</P>
+       <P>
+       This is automatically assumed when you have used the <CODE>-R</CODE>
+       parameter to specify that you are building a RLL.</TD>
+   </TR>
+   </TABLE>
+<P>
+</TR>
+
+<TR VALIGN="TOP">
+<TD COLSPAN="2">The following options will also be recognised by
+<CODE>LD</CODE> for compatibility with earlier versions,
+but they will simply be ignored and have no effect.
+This is because the relevant areas are now allocated dynamically</TD>
+</TR>
+<TR VALIGN="TOP">
+<TD><CODE>-bufl</CODE><VAR>size</VAR><CODE>[K]</CODE></TD>
+<TD>This allowed the user to specify the buffer size in reading
+    the object files and library files.</P>
+    <P>
+    <CODE>LD</CODE> v2 will allocate this area dynamically as required,
+    so it is not necessary to define this explicitly any more.</TD>
+</TR>
+
+<TR VALIGN="TOP">
+<TD><CODE>-bufp</CODE><VAR>size</VAR><CODE>[K]</CODE></TD>
+<TD>This allowed the user to specify the size of buffer to hold the
+    complete image of the program that is being linked.</P>
+    <P>
+    <CODE>LD</CODE> v2 will allocate this area dynamically as required,
+    so it is not necessary to define this explicitly any more.</TD>
+</TR>
+</TABLE>
+
+<P>
+Following the options the object files to link are specified.
+These may be any valid QL filename, with the directory extensions
+provided by a C program (eg.test_o, test1_o, etc.).
+No wildcards are allowed in the <CODE>LD</CODE> command line as
+the order of files linked is important in <CODE>LD</CODE>, and
+this could not be guaranteed if wildcards were used.</P>
+<P>
+The linker produces files that are smaller than the equivalent
+produced by the GST <CODE>LINK linker</CODE>.
+The program files produced set the job data size field in the QDOS files header. THIS MUST NOT BE MADE SMALLER by any toolkit routine
+as if this is done the programs produced will FAIL to relocate properly
+at runtime and crash the QL ! YOU HAVE BEEN WARNED!
+Making it bigger is a waste of space as this data area is only used
+during program initialisation, and is not used for the runtime stack
+or heap.</P>
+</DIR>
+
+<A NAME="ENVIRONMENT_VARIABLES"></A>
+<H3>ENVIRONMENT VARIABLES </H3>
+<DIR>
+The <CODE>LD</CODE> linker will make use of the Environment Variables
+specified below if they are set. These environment variables are
+processed before the command line options, so in the event of any clash,
+the command line parameters will take precedence.
+
+<TABLE CELLPADDING=7 WIDTH="90%">
+<TR VALIGN="TOP">
+<TD ALIGN="CENTER"><CODE>LIB_DIR</CODE></TD>
+<TD>This can be used to specify the default program directory.</TD>
+</TR>
+<TR VALIGN="TOP">
+<TD ALIGN="CENTER"><CODE>LD_OPTS</CODE></TD>
+<TD>Any parameters that would be valid on the <CODE>LD</CODE> command
+    line can be set in this environment variable</TD>
+</TR>
+</TABLE>
+</DIR>
+
+<A NAME="START_OF_UDATA_AREA"></A>
+<H3>START OF UDATA AREA </H3>
+<DIR>
+This section is only relevant to those who are trying to make
+advanced use of <CODE>LD</CODE>. In normal use one will not need to use
+(or even understand) the contents of this section. </P>
+<P>
+It revolves around the fact that normally the information held in the
+<B>BSS</B> section of a program or RLL is often only required at
+initial load time. After that it is no longer required.
+It would therefore save on memory if this space could be re-used for
+other purposes. Most programs also contain a <B>UDATA</B> section
+that is used to hold uninitialised data. If you can re-use this space
+after the initialisation phase is finished then the program will need
+less memory to run. </P>
+<P>
+Another aspect to consider is whether any space for the
+<CODE>UDATA</CODE> area should actually be included in the data stored
+as part of the program file header. Doing so reduces the size of
+the file stored on disk, but means that the loading process needs
+to take account of this. </P>
+<P>
+The algorithm used by default with <CODE>LD</CODE> is as follows:
+<UL>
+<LI>For a standard statically linked program, the <CODE>UDATA</CODE>
+    area starts at the same address as the start of the BSS Header.
+    The file header is used to store any additional space that needs
+    to be allocated to complete the <CODE>UDATA</CODE> area.
+<LI>For a standard statically linked DLL that does not call
+    another RLL, the <CODE>UDATA</CODE> area starts after the end of
+    the BSS XDEF area. Any additional space required for
+    <CODE>UDATA</CODE> is included as part of the data of the
+    program file.</LI>
+</UL>
+<P>
+This default behaviour can be modified by use of the various
+<A HREF="#Format_option">-f</A> and
+<A HREF="#z_symbols_option">-z</A> runtime options. </P>
+</DIR>
+
+<A NAME="CHANGE_HISTORY"></A>
+<H3>CHANGE HISTORY </H3>
+<DIR>
+This section details the major changes that have been made to
+this document. It is intended primarily for those who are upgrading
+their release of C68 to help them identify when and where new information
+has been included.
+
+<TABLE CELLPADDING=7 WIDTH="90%">
+<TR VALIGN="TOP">
+<TD>31 Dec 93</TD>
+<TD>DJW</TD>
+<TD>Added section on Environment Variables that <CODE>LD </CODE>
+    will now recognised</TD>
+</TR>
+<TR VALIGN="TOP">
+<TD>28 Mar 96</TD>
+<TD>DJW</TD>
+<TD>Updated to reflect the new options that are now available for
+    use with <CODE>LD</CODE> version 2</TD>
+</TR>
+<TR VALIGN="TOP">
+<TD>01 Aug 97</TD>
+<TD>DJW</TD>
+<TD>Changes to reflect conversion to HTML format.</TD>
+</TR>
+
+</TABLE>
+</DIR>
+
+</BODY>
+</HTML>
