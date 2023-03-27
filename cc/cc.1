@@ -1,0 +1,770 @@
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+         NAME
+
+              CC   - C compiler front-end.
+
+         SYNOPSIS
+
+              CC [options] filelist
+
+         DESCRIPTION
+
+              The CC  command is the users command-line front-end to the
+              compilation system.   It provides  a convenient  method of
+              controlling and running all the underlying components. The
+              CC command can support either the "C68 system for QDOS" or
+              the "CPOC system for the Psion 3a".
+
+              In the  description of  the options,  the program names in
+              square brackets  show which  of the underlying compilation
+              phases use  any  particular  option.   For  more  detailed
+              descriptions of  the options  that are  not specific to CC
+              only,  refer   to  the   documentation  specific   to  the
+              underlying programs mentioned in the square brackets.
+
+              The CC  front end  uses the extension part of the filename
+              to decide  which phases  are appropriate to any particular
+              filename.  It is important therefore that you stick to the
+              filename conventions laid out later in this document.
+
+              The  compile   options  are   preceeded  with   a  '-'  to
+              differentiate them  from any  source file name.  Note that
+              case  is   significant  when   specifying  options  unless
+              indicated otherwise.   Options can  alternatively be taken
+              from Environment Variables (as detailed later).
+
+              -A        [AS68]
+                        See AS68 documentation
+
+              -bufl     [LD]
+                        Change the  buffer length for reading libraries.
+                        See the LD documentation for nmore details.
+
+              -bufp     [LD]
+                        Change the  buffer size  for holding  the  final
+                        binary program.   See the  LD documentation  for
+                        more details.
+
+              -c        [CC]
+                        Stop  after  the  assembler  phase.   This  will
+                        produce an  object file  suitable for input into
+                        the linker.   This is  the option  used when you
+                        are compiling individual modules that will later
+                        be linked together.
+
+
+         CC_DOC             Last Changed:  18May95               CC:    1
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+
+              -crf      [LD]
+                        See LD documentation for details.
+
+              -C        [CPP]
+                        Do not  discard comments,  but pass them through
+                        to the main compile phase.
+
+              -d        [CPP]
+                        See CPP documentation for details
+
+              -D        [CPP]
+                        Pass "defines" to the pre-processor.
+
+              -DEBUG    [LD]
+                        See LD docuementation for details
+
+              -error=n  [C68/C86]
+                        Set the error level.
+
+              -extern   [C68/C86]
+                        See compiler documentation for details.
+
+              -E        [CPP]
+                        See CPP docementation for details
+
+              -format   [C68]
+              -noformat See the C68 documentatiob for details.
+
+              -frame=n  [C68]
+                        Set the frame pointer index register.
+
+              -g        [C68]
+                        Produce debugging  information.  Currently  this
+                        has little  effect in  C68.   It  does,  however
+                        cancel any -O option if that is also specified.
+
+              -h        This option is no longer used.  It is not passed
+                        to  any   of  the  underlying  programs  but  is
+                        accepted  by   CC  for   backwards  compatiblity
+                        reasons although otherwise ignored.
+
+              -icode    [C68]
+                        Output details of the internal code tables.
+
+                        N.B. This  option is  only available  if C68 was
+                        generated with  the  ICODE  option  set  in  its
+                        configuration file.  The standard version of C68
+                        does NOT support this option.
+
+
+
+
+
+         CC_DOC             Last Changed:  18May95               CC:    2
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+              -I        [CPP]
+                        Specifies search sequence for header files.
+
+                        This means  that it  is not necessary to include
+                        the pathnames  of include  files in  your source
+                        programs.   Standard   header   files   on   the
+                        distribution disk  are normally  included by the
+                        line
+                             #include <stdio.h>
+                        if they  are kept  in the include_ sub-directory
+                        in the default program directory.
+
+              -llibid   [LD]
+                        Specify library(s)  to be  searched when linking
+                        the program  before the  standard default LIBC_A
+                        library.  The  libid field  will have  the  text
+                        "lib" appended to the front, and "_a" at the end
+                        to derive  the library  name.   Thus  using  -lm
+                        would  result   in  the   library  libm_a  being
+                        searched.
+
+              -lattice  [C68]
+                        Allow LATTICE style proto-types to be used.
+
+              -list     [C68]
+                        Output a listing file.
+
+              -L        [LD]
+                        Specify  the   directory  search   sequence  for
+                        standard libraries to be used in the link.
+
+              -m        [LD]
+                        Produce a map file.
+
+              -maxerr=n [C68]
+                        Set the  maximum number of errors that should be
+                        reported   by    C68   before   abandoning   the
+                        compilation.
+
+              -ms       [LD]
+                        Produce a map file plus sumbol information.
+
+              -M        [CPP]
+                        Passed to CPP.  Produce output suitable for MAKE
+                        describingdependencies.
+
+              -MM       [CPP].  Like -M,  but system  header  files  not
+                        included in list of dependencies.
+                        Passed to CPP
+
+              -nostdinc [CPP]
+                        See CPP documentation for details.
+
+
+         CC_DOC             Last Changed:  18May95               CC:    3
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+
+              -N        [AS68]
+                        Do not  attempt to  optimise code.   By  default
+                        AS68 will  attempt to use short addressing modes
+                        where it can to reduce the size of the code.
+
+              -o file   [LD]
+                        Specify name  out output  program file.   If not
+                        specified, then a_out will be used.
+
+              -opt      [C68]
+              -noopt    See C68 documentation for details.
+
+              -O        [C68]
+                        Invoke the  maximum level of optimisation.  This
+                        can produce  quite a  significant  reduction  in
+                        program size  as well  as normally  giving  more
+                        efficient code,  so it  is normally  well  worth
+                        doing.  A  much more  detailed discussion of the
+                        optimisation   process    is   given    in   the
+                        documentation of the c68 program itself.
+
+              -p        [CC]
+                        Stop after  the CPP  pre-processor phase.   This
+                        will produce a file (ending in _i) which has the
+                        C  source   after  pre-processing   that   would
+                        normally be input to the C68 phase.
+
+              -pedantic [C68]
+                        See C68 docuemntation for details.
+
+              -P        [CPP]
+                        Passed to  CPP.  Inhibits  generation of # lines
+                        in the  output giving  line  number  information
+                        relating to the original source file.  Needed if
+                        assembler is being passed through CPP.
+
+              -qmac     [CC]
+              -QMAC     This option is  no longer used. It is not passed
+                        to  any   of  the  underlying  programs  but  is
+                        accepted  by   CC  for   backwards  compatiblity
+                        reasons although otherwise ignored.
+
+              -Qoption  [C68]
+                        This option  is used  to pass options to the C68
+                        phase that  are not  catered for  by CC.   It is
+                        followed  immediately  by  the  option  you  are
+                        interested in.   For further details see the C68
+                        documentation.
+
+              -rlibid   [LD]
+                        Specify Runtime Link Library (RLL) library(s) to
+
+
+         CC_DOC             Last Changed:  18May95               CC:    4
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+                        be searched  when linking the program before the
+                        standard default LIBC_A library.
+
+              -reg      [C68]
+              -noreg    See C68 documentation for details.
+
+              -R        [LD]
+                        Specify the directory search sequence to be used
+                        for locating Runtime Link Libraries (RLL's).
+
+              -s name   [LD]
+                        Specify the  name  of  an  alternative  start-up
+                        module from the default value of crt_o.
+
+              -stackcheck [C68]
+                        See C68 documentation for details.
+
+              -stackopt   [C68]
+              -nostackopt See C68 documentation for details.
+
+              -sym      [LD]
+                        See LD documentation for details.
+
+              -S        [CC]
+                        Stop after  the C68  compilation  phase.    This
+                        will produce a file (ending in _s) which has the
+                        assembler  source   produced  by  the  compiler.
+                        Normally this  is input  into the AS68 assembler
+                        phase to produce the object (_o) file.
+
+              -tmp      [CC]
+                        Specifies the  device and/or directory that will
+                        be used  to hold  intermediate files.  These are
+                        work  files   created  during   the  compilation
+                        process  that   are   deleted   on   completion.
+                        Therefore
+                             -tmp ram1_
+                        would cause  all temporary  files to be put onto
+                        ram1_.  The default is to use the same device as
+                        the input file to the relevant phase.
+
+              -TMP      [CC]
+                        This option is similar to the -tmp option above,
+                        but the  final output  file  (typically  the  _o
+                        file)is also put onto the device specified.
+
+              -trace    [C68]
+                        See C68 documenation for details.
+
+              -trad     [C68]
+                        Revert  to   standard  K&R  compatibility  mode.
+                        Disables most ANSI features.
+
+
+         CC_DOC             Last Changed:  18May95               CC:    5
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+
+              -trigraphs [CPP]
+                        Accept trigraphs in the C source.
+
+
+
+              -uchar    [CPP, C68]
+                        Treat the  'char' data  type  as  unsigned.   By
+                        default it is treated as signed.
+
+              -undef    [CPP]
+                        Suppress  definition   of  standard  pre-defined
+                        symbols.
+
+              -unproto  This options is  no  longer  used.   It  is  not
+                        passed to  any of the underlying programs but is
+                        accepted  by   CC  for   backwards  compatiblity
+                        reasons although otherwise ignored.
+
+              -U        [CPP]
+                        Forbid  defines   for  the   specified  symbols.
+                        Overrides the -D option if necessary.
+
+              -v        [CC, CPP, C68, AS68, LD]
+                        Run in verbose  flag.    This  means   that   CC
+                        displays the command line used to run each phase
+                        of the  compilation system  as  it  is  invoked.
+                        This is  particularily useful if you are getting
+                        a compilation  failure and  you are  not sure at
+                        what stage of the compilation process.
+
+                        The -v flag is also passed to each of the phases
+                        that CC  is running.    This  will  cause  these
+                        udernlying programs  to output  a message giving
+                        their version number.
+
+              -V        [CC]
+                        This is like the  -v option in that it causes CC
+                        to display  the command line used to invoke each
+                        underlying program.   The difference is that the
+                        -v  flag  is  not  passed  to  these  underlying
+                        programs to  make them  output their own version
+                        number message.
+
+                        This mode is also invoked automatically if CC is
+                        started  directly  from  the  command  line  (as
+                        opposed to  via some  other program such as MAKE
+                        or C68MENU), and the -v flag is not present.
+
+              -warn=n   [C68]
+                        Set the maximum level of warning reports.
+
+
+
+         CC_DOC             Last Changed:  18May95               CC:    6
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+              -x        [LD]
+                        Include a external reference symbol table in the
+                        final linked program.
+
+
+
+              -Xa       [CC]
+              -Xc       Determines compatibility modes.  In particular
+              -Xt       This option affects  the handling  of errors  in
+                        the maths  functions.  See the LIBM documenation
+                        for details.
+
+              -Ypath    [CC]
+                        Set program  search path  for  CC.  The  default
+                        location that  is used  by the  C68  compilation
+                        system to  look for  all  system  files  is  the
+                        default program  directory as set by the Toolkit
+                        2 PROG_USE  command.  The  -Y option  allows  an
+                        alternative device  and/or directory  to be used
+                        as the  location for  finding all  system  files
+                        used by the various compiler phases.
+
+                        As an example
+                             -Yflp1_
+                        will cause  the programs  to look for the system
+                        files from FLP1_. A directory can also be given.
+                        -Yflp1_comp_
+                        will cause  the programs  to look for the system
+                        files  in  the  directory  FLP1_COMP_.  You  can
+                        combine these  two usages to use sub-directories
+                        off the default program directory. Therefore
+                             Eg. -Ycprogs_
+                        will look  in the  cprogs_ sub-directory  of the
+                        default program directory.
+
+                        The -Y  option effects all file paths that would
+                        otherwise be  relative to  the  default  program
+                        directory such  as the  default path  for system
+                        include files and libraries.
+
+
+         ENVIRONMENT VARIABLES
+
+              It can  be more  convenient to  set certain options for CC
+              via Environment  Variables rather  than via the CC command
+              line.   The  following Environment Variables are currently
+              supported:
+
+                   TMP       Specifies the  device and/or directory that
+                             will be  used to  hold intermediate  files.
+                             Equivalent  to   the  -tmp  parameter  line
+                             option.
+
+
+         CC_DOC             Last Changed:  18May95               CC:    7
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+
+                   TEMP      An alternative name  to TMP  with the  same
+                             function.  If  both are  present  then  the
+                             -TMP option takes precedence.
+
+              There are  then a  number of  environment  variables  that
+              allow you  to control  where components of your system are
+              lcoated.  The  names start  with a prefix dependant on the
+              target system that the front-end has been built to support
+              as follows:
+
+                   CC_xxx    option when front-end  has  been  built  to
+                             support development  of programs  for  "C68
+                             for QDOS".
+
+                   CPOC_xxx  option when front-end  has  been  built  to
+                             support development  of programs  for "CPOC
+                             for the psion 3a".
+
+              This approach  has been  taken so  that you  can  have  to
+              variants of the front-end co-existing on the same system -
+              one targetted  at QDOS and the other at CPOC.  The options
+              available (where  the 'xx'  part indicates  the prefix  as
+              indicated above are):
+
+                   xx_OPTS   This allows any options that would normally
+                             be  passed  via  the  command  line  to  be
+                             preset.     The     environment    variable
+                             information is processed before the command
+                             line, so  in the  event of any conflict the
+                             command   line    information   will   take
+                             precedence.
+
+                   xx_PATH   The location  that  is  used  to  hold  the
+                             programs underlying the compilation system.
+                             Equivalent to the -Y command line option.
+
+                             Defaults:  CC_PATH=
+                                        CPOC_PATH=
+
+                   xx_CPP    The name of the C preprocessor to be used.
+
+                             Defaults:  CC_CPP=cpp
+                                        CPOC_cpp=cpoc_cpp
+
+                   xx_COMP   The name of  the main  C compilation  phase
+                             that is to be used.
+
+                             Defaults: CC_COMP=c68
+                                       CPOC_COMP=c86
+
+                   xx_ASM    The name of the assembler to be used.
+
+
+         CC_DOC             Last Changed:  18May95               CC:    8
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+
+                             Defaults: CC_ASM=as68
+                                       CPOC_ASM=c86
+
+                   xx_LD     The name of the linker to be used.
+
+                             Defaults: CC_LD=ld
+                                       CPOC_LD=ld86
+
+                   xx_INC    The location of  include files  for use  by
+                             the  pre-processor.   If  this  environment
+                             variable is  specified, then a -I parameter
+                             specifying this  path will be automatically
+                             generated and passed to the pre-processor.
+
+                             Defaults: CC_INC=
+                                       CPOC_INC=
+
+                   xx_LIB    The location of  library files  for use  by
+                             the linker.   If this  environemtn variable
+                             is specified than a -L parameter specifying
+                             this path  will be  automatically generated
+                             by CC and passed to the linker.
+
+                             Defaults: CC_LIB=
+                                       CPOC_LIB=
+
+              If an  option is also specified via the command line, then
+              this overrides the setting of the Environment Variable.
+
+
+         EXIT VALUES
+
+              The CC program returns the following error codes:
+
+              0    All compilations were  successful. That  is, at least
+                   one source file was compiled, and there were no fatal
+                   errors.
+
+              1    One or more fatal compilation errors were reported.
+
+              2    No source files were found.
+
+              < 0  QDOS error code. A problem was encountered in running
+                   the compiler driver (eg. No memory).
+
+
+
+         THE COMPILATION PROCESS
+
+              The actual  compilation process  takes  place  in  several
+              phases.   Each  phase is  performed by a separate program.
+
+
+         CC_DOC             Last Changed:  18May95               CC:    9
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+              All these  programs are  controlled by CC so that the user
+              does  not   have  to   run  them  individually.   However,
+              awareness of  the process  helps understand  many  of  the
+              error  conditions  that  can  arise.   In  particular  the
+              filename extensions  are used by CC to decide what actions
+              are required for a particular file.
+
+              C source  files are  expected to  have the  extension 'c'.
+              These files  are passed to the pre-processor to produce an
+              'i' file.  The pre-processor phase actions all keywords in
+              the C source file that begin with # symbol.
+
+              The next  stage is  the main  C compilation phase in which
+              the C  code is  analysed and  validated.  The input to the
+              compile phase  is an  'i' file  (or  a  'k'  file  if  the
+              -unproto option  is used)  from the  pre-processor  stage.
+              The compile  phase generates assembler output which is put
+              into a  file with  a 's'  (or 'asm'  if one the additional
+              optional compilers  is used)  extension.   You may wish to
+              look at  this file  to see what code has been generated by
+              your C program.
+
+              The C68 version of the compiler an generate assembler code
+              file in two formats. The 's' extension is used if it is in
+              the format  used by  the AS68  assembler provided with the
+              C68 system.   The 'asm'  extension is  used if  it is in a
+              format suitable for use by the QMAC assembler (an enhanced
+              version of the GST macro assembler will be obtainable from
+              the QUANTA User Group). N.B. the version of QMAC currently
+              available is  not suitable  - an announcement will be made
+              when the enhanced version becomes available.
+
+              The assembler  file is  now compiled  down into  an object
+              file  and  put into  a file  with an  'o'  extension.  The
+              format  of  this  object  file  will  be  SROFF  (Sinclair
+              Relocatable Object  File Format) for QDOS targets, and the
+              MINIX object format for CPOC.
+
+              Finally the users object file(s) are input into the linker
+              that converts  them into  machine code,  and adds  support
+              routines from the libraries supplied with C68.  The output
+              from the linker is a program that can be run with the EXEC
+              command (or an equivalent) from SuperBasic.
+
+              If this  process seems  complicated do not worry.   The CC
+              front-end program takes control of this process so that it
+              is easy to use.
+
+              It is also possible to get the CC command to run assembler
+              files through  the C  pre-processor, and then pass them to
+              the  Assembler   phase  without   attempting  to  run  the
+              compilation  phase   in  the   middle.   If  the  filename
+
+
+         CC_DOC             Last Changed:  18May95               CC:   10
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+              extension is  'x', then  this is  done automatically.   If
+              the filename  extension is  's' then  the source  file  is
+              examined, and  if the  first character is a # symbol, then
+              the pre-processor  is run  before the assembler (This last
+              action is  for comaptibility with tradional Unix treatment
+              of assembler files).
+
+         COMPILING A C PROGRAM ON QDOS
+
+              We now look at some practical of CC to compile C programs.
+              Note that  the C68  compilation system  will expects to be
+              able to  use use  Toolkit 2  directories.  This means that
+              TOOLKIT 2  is  highly  recommended  for  running  the  C68
+              system.  Programs  generated by  the C68  system will  use
+              Toolkit 2  directories if  present,  but  will  also  work
+              satisfactorily without  it. However, certain library calls
+              require TOOLKIT  2t, so  for programs  to work on all QL's
+              these should  be avoided.   The library documentation will
+              state when routines use TOOLKIT 2.
+
+              To compile  your program  (for example test_c) simply type
+              (from SuperBasic ):-
+
+                   EX cc;'test_c'
+
+              The above  command loads  the  compiler  phases  from  the
+              default program  device,  and  compiles  the  source  file
+              test_c found  on the  default data  device, writing  out a
+              file test_p  from CPP,  replacing it  with a  file  test_s
+              after running  C68, and  test_o file  after running  AS68.
+              Finally the  linker will  produce an  output  file  called
+              a_out.
+
+              Any errors  or  warnings  are  reported  in  an  on-screen
+              window.  You  can also get CC to display the command lines
+              for each  phase as  it is  run by including the -v option,
+              and put  the final  program into a specified file by using
+              the -o option.   To do this the above command line becomes
+
+                   EX cc;'-v -otest test_c'
+
+              The output from the compiler passes may be redirected into
+              a file  by use  of the  UNIX style >, and &> commands. For
+              example, to  redirect standard  out (the  compiler sign on
+              messages) to a file ram1_wombat, you would type
+
+                   >ram1_wombat
+
+              anywhere in  the command  line. To redirect stderr as well
+              (the channel  used for  any fatal QDOS error messages from
+              CC) you would use
+
+
+
+         CC_DOC             Last Changed:  18May95               CC:   11
+                   >&ram1_wombat
+
+              Finally to  append either  of the  above  commands  to  an
+              existing file  without destroying  it's contents you would
+              use
+
+                   >>ram1_wombat  in the first instance, and
+                   >>&ram1_wombat in the second.
+
+              Redirection is  covered  more  fully  in  the  QDOSC68_DOC
+              document.
+
+              Wildcards may  be used to select the files to be compiled.
+              These follow  the Unix  rules for  wild-cards  -  see  the
+              INTRO_DOC document  for  more  details.  For  example,  to
+              compile all  files in the current data directory ending in
+              _c you would use:
+
+                   EX CC;'<compiler options> *_c'
+
+              The asterisk tells the CC program that the given name is a
+              wildcard. It  will then match any filename element that is
+              before _c.  To compile files starting in arc and ending in
+              _c you would use :
+
+                   EX CC;'<compiler options> ARC*_C'
+
+              Wherever an  asterisk appears  CC will  try  and  match  a
+              filename element to the name. However, if a name begins or
+              ends with  any characters  other than  an  asterisk,  then
+              these characters  must be  matched exactly.  Asterisks can
+              also be used within filenames,
+
+                   eg.  tes*_wom*_c
+
+              matches test_wombat_c,  tester_woman_user_c, but would NOT
+              match  the   filename  test_wom_c_hello.   This   wildcard
+              matching is  the same as that used in the directory access
+              functions  described  in  the  library,  and  so  is  also
+              available to  your own  programs. The  CC program has a 4K
+              buffer for  filenames, so  that is  the limit on the total
+              length of the names of all the files to be compiled.
+
+
+         CC_DOC             Last Changed:  18May95               CC:   11
+
+
+
+         C68 COMPILATION SYSTEM                            CC Front-End
+
+
+
+              KNOWN PROBLEMS
+
+              1)   If an option name  is mispelt, then it may be treated
+                   as a  different option  which has  less text and thus
+                   not have  the expected  effect.  This could mean that
+                   CC does  not act  as expected  or that  the option is
+                   passed to the wrong program.
+
+                   As an example, if  you typed  -cr instead  of -crf it
+                   would be  treated as  -c by CC, which would thus stop
+                   after creating any _o files without proceeding to the
+                   link stage.
+
+                   Another example might  be if you specified -maxerrors
+                   instead of  -maxerrors would  result in the parameter
+                   being passed  to LD (as though it were -m) instead of
+                   to C68 as you probably intended.
+
+
+              CHANGE HISTORY
+
+              This section  documents major  changes that have been made
+              to this  document.  It sprime purpose is to help those who
+              are upgraing  there version  of the C68 system to identify
+              what has changed.
+
+              31 Dec 93  v4.12  DJW  - Documented  fact   that   CC_OPTS
+                                       Environment   variable   is   now
+                                       supported.
+                                     - Documented  the  -V  option,  and
+                                       updated   the    -v   description
+                                       accordingly.
+                                     - Updated dewscriptions  of some of
+                                       the other supported options.
+
+              03 Jun 95  v4.25  DJW  - Updated documentation to list all
+                                       options   that    are   currently
+                                       supported.  Re-arranged  the list
+                                       to  be   in  alphabetical   order
+                                       rather than  that of  the program
+                                       that uses the parameter option.
+
+
+
+
+         CC_DOC             Last Changed:  18May95               CC:   12
+

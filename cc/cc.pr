@@ -1,0 +1,32 @@
+#system epoc img
+#set epocinit=iplib
+-- #set epocinit=iclib
+#model small jpi
+
+#pragma optimize(speed=>off)
+#pragma option(lang_ext=>on)
+
+#pragma warn(wclt=>on)
+#pragma warn(wfnd=>on)
+#pragma warn(wpnd=>on)
+#pragma warn(wnre=>on)
+#pragma warn(wnrv=>on)
+#pragma warn(wpnu=>on)
+
+#pragma define(NDEBUG=>1)
+#pragma define(__STDC__=>1)
+#pragma define(EPOC=>1)
+#pragma define(JPIC=>1)
+#pragma define(CPOC=>1)
+
+-- #pragma define(JDBG=>1)
+-- #pragma debug(vid=>full)
+
+#compile cc
+#compile ccutil
+
+#pragma link(cpoclib.lib)
+-- #pragma link(clib.lib)
+
+#link %main
+
