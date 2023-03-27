@@ -15,3 +15,5 @@ Right now it set to EPOC target, in essense 8086 machine. I reconfigured c86 bac
 It goes as far as as compiling .o file correctly recognizable by objdump86 from dev86.
 
 No idea about libraries, I used headers from https://github.com/alexfru/SmallerC
+
+cpp currently not compiling, I used clang's cpp by making symlink with name cpoc_cpp to it and putting it in PATH
